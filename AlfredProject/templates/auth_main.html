@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<title>ACM Alfred</title>
+	</head>
+	<body>
+		<span>Username</span>
+		<input type="text" id="username"/></br>
+		<span>Password</span>
+		<input type="text" id="password"/></br>
+		<input type="button" onclick="login()" value="Log In"/>
+		<input type="button" onclick="signup()" value="Sign Up"/>
+	</body>
+	<script>
+		function login(){
+			var username = document.getElementById("username").value;
+			var password = document.getElementById("password").value;
+			document.location.href = "verify/username="+username+":password="+password;
+		}
+	</script>
+</html>
