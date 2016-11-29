@@ -6,7 +6,11 @@ from django.http import HttpResponse
 
 
 def echo(request, text=''):
-    context = {'input': text}
+    if 'session' in request.COOKIES:
+        this_cookie = request.COOKIES['session']
+        context = {'input': text, 'username': this_cookie.split(':')[1]}
+    else:
+        context = {'input': 'Failed to log in', 'username': ' '}
     return render(request, 'index.html', context)
 
 

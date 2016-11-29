@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+import random
+import hashlib
 
 # Create your views here.
 
@@ -9,7 +11,10 @@ def auth_main(request):
 
 def auth_verify(request, username='', password=''):
     if username == 'username' and password == 'password':
-        return redirect("/home/echo/khan")
+        response = redirect("/home/echo/query")
+        username_hash = hashlib.sha224(username).hexdigest()
+        response.set_cookie('session', username_hash+':'+username)
+        return response
     return redirect("/auth/err/"+username)
 
 

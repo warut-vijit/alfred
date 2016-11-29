@@ -19,7 +19,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.auto),
-    url(r'^auth/', include('auth.urls')),
+    url(r'^auth/', include('authpage.urls')),
     url(r'^home/', include('homepage.urls')),
     url(r'^admin/', admin.site.urls),
 ]
