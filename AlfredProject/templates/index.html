@@ -1,12 +1,50 @@
 <html>
-	<body style="background-color:#AAF0AA">
-		<h1>Welcome {{ username }}</h1>
-		<input type="text" id="querybox"/>
-		<input type="button" value="Search" onclick="query(document.getElementById('querybox').value)"/>
-		<script>
-		function query(text){
-			document.location.href = '/homepage/echo/'+text;
+    <head>
+        <title>Home</title>
+    </head>
+	<body style="background-color:#AAF0AA;font-family:Arial">
+        <div style="background-color:#3a3a3a;position:absolute;left:0px;top:0px;width:100%;height:60px;">
+            <input type="button" value="Home" onclick="home()" style="border:0px;background-color:#3a3a3a;color:#ffffff;padding:20px;"/>
+            <input type="button" value="Sign Out" onclick="logout()" style="border:0px;background-color:#3a3a3a;color:#ffffff;padding:20px;"/>
+            <input type="button" value="Add Venue" onclick="dev()" style="border:0px;background-color:#3a3a3a;color:#ffffff;padding:20px;"/>
+            <input type="button" value="{{username}}" onclick="username()" style="border:0px;background-color:#3a3a3a;color:#ffffff;float:right;padding:20px;"/>
+        </div>
+        <div style="background-color:#e0e0e0;position:absolute;left:100px;top:100px;border:1px solid black;height:200px;width:200px;padding:20px">
+            <p>Post a Takeout Order Request</p>
+            <table>
+                <tr><td>Venue</td><td><input type="text" id="venue"/></td></tr>
+                <tr><td>Order</td><td><input type="text" id="order"/></td></tr>
+                <tr><td>Cost</td><td><input type="text" id="cost"/></td></tr>
+            </table>
+            </br>
+            <input type="button" value="Submit" onclick="query()" style="height:50;width:200;"/>
+        </div>
+        <br>
+		<span id="out"></span>
+        <script>
+		function query(){
+		    if(document.getElementById('venue').value!="" && document.getElementById('order').value!="" && document.getElementById('cost').value!=""){
+                text =  document.getElementById('venue').value+":";
+                text += document.getElementById('order').value+":";
+                text += document.getElementById('cost').value;
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open( "GET", document.URL+"/queryresp/"+text, false );
+                xmlHttp.send( null );
+                document.getElementById("out").innerHTML = xmlHttp.responseText;
+                alert("Request submitted successfully");
+            }else{
+                alert("Fields cannot be left empty");
+            }
 		}
+		function home(){
+		    document.location.href = document.URL;
+		}
+		function logout(){
+		    document.location.href = document.URL+"/logout";
+		}
+        function dev(){
+            document.location.href = document.URL+"/dev";
+        }
 		</script>
 	</body>
 </html>

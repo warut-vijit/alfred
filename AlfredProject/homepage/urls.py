@@ -4,7 +4,9 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.warn, name='warn'),
-    url(r'^echo$', views.index, name='index'),
-    url(r'^echo/(?P<text>[a-z]+)$', views.echo, name='echo'),
-    url(r'^echo/(?P<text>[a-z]+)/$', views.echo, name='echo'),
+    url(r'^echo$', views.echo, name='echo'),
+    url(r'^echo/logout$', views.logout, name='logout'),
+    url(r'^echo/dev$', views.dev, name='dev'),
+    url(r'^echo/addvenue/(?P<venue>[a-zA-Z0-9_]+):(?P<phone>[a-zA-Z0-9_]+)/$', views.addvenue, name='addvenue'),
+    url(r'^echo/queryresp/(?P<venue>[a-zA-Z0-9_]+):(?P<order>[a-zA-Z0-9_]+):(?P<cost>[a-zA-Z0-9.]+)/$', views.queryresp, name='queryresp')
 ]

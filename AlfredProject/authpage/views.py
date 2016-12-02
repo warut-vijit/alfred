@@ -11,7 +11,7 @@ def auth_main(request):
 
 def auth_verify(request, username='', password=''):
     if username == 'username' and password == 'password':
-        response = redirect("/home/echo/query")
+        response = redirect("/home/echo")
         username_hash = hashlib.sha224(username).hexdigest()
         response.set_cookie('session', username_hash+':'+username)
         return response
