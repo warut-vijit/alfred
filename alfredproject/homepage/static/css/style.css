@@ -1,0 +1,11 @@
+body{
+    background-color:#AAF0AA;
+    font-family:Verdana
+}
+div.module{
+    background-color:#e0e0e0;
+    position:absolute;
+    border:3px solid #000000;
+    padding:20px;
+    box-shadow: 3px 10px 6px #333333;
+}
