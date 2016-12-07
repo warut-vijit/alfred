@@ -6,7 +6,7 @@ class User(models.Model):
     name = models.CharField(max_length=40)
 
     def __str__(self):
-        return "User "+self.id+': '+str(self.name)
+        return "User "+str(self.id)+': '+str(self.name)
 
 
 class Balance(models.Model):
@@ -23,7 +23,7 @@ class Venue(models.Model):
     phone = models.CharField(max_length=20)
 
     def __str__(self):
-        return "Venue "+self.id+": "+str(self.name)
+        return "Venue "+str(self.id)+": "+str(self.name)
 
 
 class FoodRequest(models.Model):

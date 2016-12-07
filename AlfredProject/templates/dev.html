@@ -1,39 +1,90 @@
 <!DOCTYPE html>
 <head>
+    {% load staticfiles %}
     <title>Developer</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body style="background-color:#AAF0AA;font-family:Arial">
+<body ng-app="devApp" ng-controller="devCtrl" ng-init="initialize()">
     <div style="background-color:#3a3a3a;position:absolute;left:0px;top:0px;width:100%;height:60px;">
         <input type="button" value="Home" onclick="home()" style="border:0px;background-color:#3a3a3a;color:#ffffff;padding:20px;"/>
         <input type="button" value="Sign Out" onclick="logout()" style="border:0px;background-color:#3a3a3a;color:#ffffff;padding:20px;"/>
         <input type="button" value="Add Venue" onclick="dev()" style="border:0px;background-color:#3a3a3a;color:#ffffff;padding:20px;"/>
         <input type="button" value="{{username}}" onclick="username()" style="border:0px;background-color:#3a3a3a;color:#ffffff;float:right;padding:20px;"/>
     </div>
-    <div style="background-color:#e0e0e0;position:absolute;left:100px;top:100px;border:1px solid black;height:200px;width:200px;padding:20px">
+    <div class="module" style="left:100px;top:100px;height:200px;width:200px;">
         <p>Add Venue</p>
         <table>
-            <tr><td>Venue</td><td><input type="text" id="venue"/></td></tr>
-            <tr><td>Phone</td><td><input type="text" id="phone"/></td></tr>
+            <tr><td>Venue</td><td><input type="text" ng-model="venue"/></td></tr>
+            <tr><td>Phone</td><td><input type="text" ng-model="phone"/></td></tr>
         </table>
-        </br>
-        <input type="button" value="Submit" onclick="query()" style="height:50;width:200;"/>
+        <br>
+        <input type="button" value="Submit" ng-click="add()" style="height:50;width:200;"/>
     </div>
+    <div class="module" style="left:350px;top:100px;height:400px;width:300px;">
+        <p style="font-size:25px">Venues</p>
+        {% verbatim %}
+        <div style="overflow-y:scroll;height:330px;width:300px">
+            <table>
+                <tr ng-repeat="location in venues">
+                    <td style="width: 80px;">{{location['name']}}</td>
+                    <td style="width: 80px;">{{location['phone']}}</td>
+                    <td style="width: 80px;"><i class="material-icons button" ng-click="delete(location['name'])" style="float:right;">delete</i></td>
+                </tr>
+            </table>
+        </div>
+        {% endverbatim %}
+    </div>
+
     <script>
-        function query(){
-		    if(document.getElementById('venue').value!="" && document.getElementById('phone').value!=""){
-                text =  document.getElementById('venue').value+":";
-                text += document.getElementById('phone').value;
+        var app = angular.module('devApp', []);
+        app.controller('devCtrl', function($scope) {
+            $scope.initialize = function() {
                 var i = document.URL.lastIndexOf("/");
                 var parent_url = document.URL.substr(0,i);
                 var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open( "GET", parent_url+"/addvenue/"+text, false );
+                var ready = false;
+                xmlHttp.onreadystatechange = function() {
+                    if (xmlHttp.readyState == XMLHttpRequest.DONE) {
+                        $scope.venues = JSON.parse(xmlHttp.responseText);
+                    }
+                }
+                xmlHttp.open( "GET", parent_url+"/getvenue/", false );
                 xmlHttp.send( null );
-                document.getElementById("out").innerHTML = xmlHttp.responseText;
-                alert("Request submitted successfully");
-            }else{
-                alert("Fields cannot be left empty");
+            };
+            $scope.delete = function(venue_name) {
+                var i = document.URL.lastIndexOf("/");
+                var parent_url = document.URL.substr(0,i);
+                var xmlHttp = new XMLHttpRequest();
+                var ready = false;
+                xmlHttp.onreadystatechange = function() {
+                    if (xmlHttp.readyState == XMLHttpRequest.DONE) {
+                        $scope.venues = JSON.parse(xmlHttp.responseText);
+                    }
+                }
+                xmlHttp.open( "GET", parent_url+"/delvenue/"+venue_name, false );
+                xmlHttp.send( null );
             }
-		}
+            $scope.add = function(){
+                if($scope.venue!="" && $scope.phone!=""){
+                    text =  $scope.venue+":";
+                    text += $scope.phone;
+                    var i = document.URL.lastIndexOf("/");
+                    var parent_url = document.URL.substr(0,i);
+                    var xmlHttp = new XMLHttpRequest();
+                    xmlHttp.onreadystatechange = function() {
+                        if (xmlHttp.readyState == XMLHttpRequest.DONE) {
+                            $scope.venues = JSON.parse(xmlHttp.responseText);
+                        }
+                    }
+                    xmlHttp.open( "GET", parent_url+"/addvenue/"+text, false );
+                    xmlHttp.send( null );
+                }else{
+                    alert("Fields cannot be left empty");
+                }
+            }
+        });
 		function home(){
 		    var i = document.URL.lastIndexOf("/");
             document.location.href = document.URL.substr(0,i);

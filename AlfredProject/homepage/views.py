@@ -1,8 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+import json
 from models import FoodRequest, Venue, User
 
 # Create your views here.
+
+
+def auth(request):
+    if 'session' in request.COOKIES:
+        this_cookie = request.COOKIES['session']
+        context = {'username': this_cookie.split(':')[1]}
+        return render(request, 'index.html', context)
+    return redirect("/auth")
 
 
 def dev(request):
@@ -52,8 +61,26 @@ def queryresp(request, venue='', order='', cost=''):
 
 def addvenue(request, venue='', phone=''):
     if 'session' in request.COOKIES:
-        new_venue = Venue(name=venue, phone=phone)
+        new_venue = Venue.objects.create(name=venue, phone=phone)
         new_venue.save()
-        return HttpResponse(str(Venue.objects.count())+" venues in system")
+        venues = [{'name':venue.name, 'phone':venue.phone} for venue in Venue.objects.all()]
+        return HttpResponse(json.dumps(venues))
+    else:
+        return HttpResponse("Unable to process request: you are not logged in.")
+
+
+def delvenue(request, venue=''):
+    if 'session' in request.COOKIES:
+        Venue.objects.filter(name=venue).delete()
+        venues = [{'name': venue.name, 'phone': venue.phone} for venue in Venue.objects.all()]
+        return HttpResponse(json.dumps(venues))
+    else:
+        return HttpResponse("Unable to process request: you are not logged in.")
+
+
+def getvenue(request):
+    if 'session' in request.COOKIES:
+        venues = [{'name':venue.name, 'phone':venue.phone} for venue in Venue.objects.all()]
+        return HttpResponse(json.dumps(venues))
     else:
         return HttpResponse("Unable to process request: you are not logged in.")
