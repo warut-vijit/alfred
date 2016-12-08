@@ -20,7 +20,16 @@
             <tr><td>Phone</td><td><input type="text" ng-model="phone"/></td></tr>
         </table>
         <br>
-        <input type="button" value="Submit" ng-click="add()" style="height:50;width:200;"/>
+        <input type="button" value="Submit" ng-click="add_venue()" style="height:50;width:200;"/>
+    </div>
+    <div class="module" style="left:100px;top:350px;height:200px;width:200px;">
+        <p>Add User</p>
+        <table>
+            <tr><td>Name</td><td><input type="text" ng-model="name"/></td></tr>
+            <tr><td>Email</td><td><input type="text" ng-model="email"/></td></tr>
+        </table>
+        <br>
+        <input type="button" value="Submit" ng-click="add_user()" style="height:50;width:200;"/>
     </div>
     <div class="module" style="left:350px;top:100px;height:400px;width:300px;">
         <p style="font-size:25px">Venues</p>
@@ -30,16 +39,40 @@
                 <tr ng-repeat="location in venues">
                     <td style="width: 80px;">{{location['name']}}</td>
                     <td style="width: 80px;">{{location['phone']}}</td>
-                    <td style="width: 80px;"><i class="material-icons button" ng-click="delete(location['name'])" style="float:right;">delete</i></td>
+                    <td style="width: 80px;"><i class="material-icons button" ng-click="delete_venue(location['name'])" style="float:right;">delete</i></td>
                 </tr>
             </table>
         </div>
         {% endverbatim %}
     </div>
+    <div class="module" style="left:700px;top:100px;height:400px;width:350px;">
+        <p style="font-size:25px">Users</p>
+        {% verbatim %}
+        <div style="overflow-y:scroll;height:330px;width:350px">
+            <table>
+                <tr ng-repeat="user in users">
+                    <td style="width: 80px;">{{user['name']}}</td>
+                    <td style="width: 80px;">{{user['email']}}</td>
+                    <td style="width: 80px;"><i class="material-icons button" ng-click="delete_user(user['name'])">delete</i></td>
+                    <td style="width: 80px;"><i class="material-icons button" ng-click="email_user(user['name'])">email</i></td>
+                    <td style="width: 80px;"><i class="material-icons button" ng-click="detail_user(user['name'])">find_in_page</i></td>
+                </tr>
+            </table>
+        </div>
+        {% endverbatim %}
+    </div>
+    <div class="module" style="left:400px;top:200px;height:400px;width:400px;" ng-show="detail!=null">
+        {% verbatim %}
+        {{detail}}
+        {% endverbatim%}
+    </div>
 
     <script>
         var app = angular.module('devApp', []);
         app.controller('devCtrl', function($scope) {
+
+            $scope.detail = null;
+
             $scope.initialize = function() {
                 var i = document.URL.lastIndexOf("/");
                 var parent_url = document.URL.substr(0,i);
@@ -52,8 +85,16 @@
                 }
                 xmlHttp.open( "GET", parent_url+"/getvenue/", false );
                 xmlHttp.send( null );
+
+                xmlHttp.onreadystatechange = function() {
+                    if (xmlHttp.readyState == XMLHttpRequest.DONE) {
+                        $scope.users = JSON.parse(xmlHttp.responseText);
+                    }
+                }
+                xmlHttp.open( "GET", parent_url+"/getuser/", false );
+                xmlHttp.send( null );
             };
-            $scope.delete = function(venue_name) {
+            $scope.delete_venue = function(venue_name) {
                 var i = document.URL.lastIndexOf("/");
                 var parent_url = document.URL.substr(0,i);
                 var xmlHttp = new XMLHttpRequest();
@@ -65,8 +106,19 @@
                 }
                 xmlHttp.open( "GET", parent_url+"/delvenue/"+venue_name, false );
                 xmlHttp.send( null );
+            };
+            $scope.detail_user = function(user_name) {
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.onreadystatechange = function() {
+                    if (xmlHttp.readyState == XMLHttpRequest.DONE) {
+                        $scope.detail = xmlHttp.responseText;
+                    }
+                }
+                console.log("Requesting user details for user "+user_name)
+                xmlHttp.open( "GET", document.URL+"/detail/"+user_name, false );
+                xmlHttp.send( null );
             }
-            $scope.add = function(){
+            $scope.add_venue = function(){
                 if($scope.venue!="" && $scope.phone!=""){
                     text =  $scope.venue+":";
                     text += $scope.phone;
@@ -84,13 +136,46 @@
                     alert("Fields cannot be left empty");
                 }
             }
+            $scope.delete_user = function(user_name) {
+                var i = document.URL.lastIndexOf("/");
+                var parent_url = document.URL.substr(0,i);
+                var xmlHttp = new XMLHttpRequest();
+                var ready = false;
+                xmlHttp.onreadystatechange = function() {
+                    if (xmlHttp.readyState == XMLHttpRequest.DONE) {
+                        $scope.users = JSON.parse(xmlHttp.responseText);
+                    }
+                }
+                xmlHttp.open( "GET", parent_url+"/deluser/"+user_name, false );
+                xmlHttp.send( null );
+            }
+            $scope.add_user = function(){
+                if($scope.name!="" && $scope.email!=""){
+                    text =  $scope.name+":";
+                    text += $scope.email;
+                    var i = document.URL.lastIndexOf("/");
+                    var parent_url = document.URL.substr(0,i);
+                    var xmlHttp = new XMLHttpRequest();
+                    xmlHttp.onreadystatechange = function() {
+                        if (xmlHttp.readyState == XMLHttpRequest.DONE) {
+                            $scope.users = JSON.parse(xmlHttp.responseText);
+                        }
+                    }
+                    xmlHttp.open( "GET", parent_url+"/adduser/"+text, false );
+                    xmlHttp.send( null );
+                }else{
+                    alert("Fields cannot be left empty");
+                }
+            }
         });
 		function home(){
 		    var i = document.URL.lastIndexOf("/");
             document.location.href = document.URL.substr(0,i);
 		}
 		function logout(){
-		    document.location.href = document.URL;
+		    var i = document.URL.lastIndexOf("/");
+            var parent_url = document.URL.substr(0,i);
+            document.location.href = parent_url+"/logout";
 		}
         function dev(){
             var i = document.URL.lastIndexOf("/");

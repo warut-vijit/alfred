@@ -26,9 +26,8 @@ def echo(request):
     if 'session' in request.COOKIES:
         this_cookie = request.COOKIES['session']
         context = {'username': this_cookie.split(':')[1]}
-    else:
-        context = {'username': ' '}
-    return render(request, 'index.html', context)
+        return render(request, 'index.html', context)
+    return redirect("/auth")
 
 
 def index(request):
@@ -37,7 +36,7 @@ def index(request):
 
 def logout(request):
     if 'session' in request.COOKIES:
-        response = HttpResponse("Successfully logged out.")
+        response = render(request, 'logout.html')
         response.delete_cookie('session')
         return response
     return HttpResponse("Not logged in, no action taken")
@@ -56,7 +55,7 @@ def queryresp(request, venue='', order='', cost=''):
         new_request.save()
         return HttpResponse(str(FoodRequest.objects.count())+" requests being processed")
     else:
-        return HttpResponse("Unable to process request: you are not logged in.")
+        return redirect("/auth")
 
 
 def addvenue(request, venue='', phone=''):
@@ -66,7 +65,7 @@ def addvenue(request, venue='', phone=''):
         venues = [{'name':venue.name, 'phone':venue.phone} for venue in Venue.objects.all()]
         return HttpResponse(json.dumps(venues))
     else:
-        return HttpResponse("Unable to process request: you are not logged in.")
+        return redirect("/auth")
 
 
 def delvenue(request, venue=''):
@@ -75,7 +74,18 @@ def delvenue(request, venue=''):
         venues = [{'name': venue.name, 'phone': venue.phone} for venue in Venue.objects.all()]
         return HttpResponse(json.dumps(venues))
     else:
-        return HttpResponse("Unable to process request: you are not logged in.")
+        return redirect("/auth")
+
+
+def detail(request, name=''):
+    if 'session' in request.COOKIES:
+        try:
+            userid = User.objects.get(name=name).id
+        except User.DoesNotExist:
+            userid = ""
+        return HttpResponse(userid)
+    else:
+        return redirect("/auth")
 
 
 def getvenue(request):
@@ -83,4 +93,31 @@ def getvenue(request):
         venues = [{'name':venue.name, 'phone':venue.phone} for venue in Venue.objects.all()]
         return HttpResponse(json.dumps(venues))
     else:
-        return HttpResponse("Unable to process request: you are not logged in.")
+        return redirect("/auth")
+
+
+def adduser(request, name='', email=''):
+    if 'session' in request.COOKIES:
+        new_user = User.objects.create(name=name, email=email)
+        new_user.save()
+        users = [{'name':user.name, 'email':user.email} for user in User.objects.all()]
+        return HttpResponse(json.dumps(users))
+    else:
+        return redirect("/auth")
+
+
+def deluser(request, name=''):
+    if 'session' in request.COOKIES:
+        User.objects.filter(name=name).delete()
+        users = [{'name': user.name, 'email': user.email} for user in User.objects.all()]
+        return HttpResponse(json.dumps(users))
+    else:
+        return redirect("/auth")
+
+
+def getuser(request):
+    if 'session' in request.COOKIES:
+        users = [{'name': user.name, 'email':user.email} for user in User.objects.all()]
+        return HttpResponse(json.dumps(users))
+    else:
+        return redirect("/auth")

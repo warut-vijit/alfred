@@ -4,9 +4,10 @@ from django.db import models
 
 class User(models.Model):
     name = models.CharField(max_length=40)
+    email = models.CharField(max_length=60)
 
     def __str__(self):
-        return "User "+str(self.id)+': '+str(self.name)
+        return "User "+str(self.id)+': '+str(self.name)+" email "+str(self.email)
 
 
 class Balance(models.Model):

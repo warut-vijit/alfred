@@ -13,18 +13,14 @@
             <input type="button" value="Add Venue" onclick="dev()" style="border:0px;background-color:#3a3a3a;color:#ffffff;padding:20px;"/>
             <input type="button" value="{{username}}" onclick="username()" style="border:0px;background-color:#3a3a3a;color:#ffffff;float:right;padding:20px;"/>
         </div>
-        <div class="module" style="left:100px;top:100px;height:200px;width:200px;">
-            <p>Post a Takeout Order Request</p>
-            <table>
-                <tr><td>Venue</td><td><input type="text" id="venue"/></td></tr>
-                <tr><td>Order</td><td><input type="text" id="order"/></td></tr>
-                <tr><td>Cost</td><td><input type="text" id="cost"/></td></tr>
-            </table>
+        <center>
+        <div class="module" style="position:relative;height:150px;width:300px;">
+            <p>Successfully Logged Out</p>
             </br>
-            <input type="button" value="Submit" onclick="query()" style="height:50;width:200;"/>
+            <input type="button" value="Sign In" onclick="signin()" style="height:50;width:200;"/>
         </div>
+        </center>
         <br>
-		<span id="out"></span>
         <script>
 		function query(){
 		    if(document.getElementById('venue').value!="" && document.getElementById('order').value!="" && document.getElementById('cost').value!=""){
